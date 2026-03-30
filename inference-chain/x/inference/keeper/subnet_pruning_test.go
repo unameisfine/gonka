@@ -273,8 +273,8 @@ func TestPruneSubnetData_UnsettledEscrowPreservedOnPartialSendFailure(t *testing
 		Times(3) // called 3 times: 2 succeed, 3rd fails, 4th never reached
 
 	// The Remover should NOT delete the escrow when distribution fails.
-	// The Pruner framework logs the error and continues, so pruneSubnet returns nil.
-	// But the escrow must be preserved for retry on the next block.
+	// CacheContext ensures the first 2 successful sends are NOT committed,
+	// so retry on next block does not double-pay any validator.
 	err = pruneSubnet(k, ctx, 5)
 	require.NoError(t, err)
 
